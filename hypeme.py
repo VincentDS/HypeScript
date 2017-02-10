@@ -25,13 +25,18 @@ from bs4 import BeautifulSoup
 import json
 import string
 import os
+import eyed3
+import simplejson
+import cStringIO
+import albumart
 
 # AREA_TO_SCRAPE
 # This is the general area that you'd like to parse and scrape.
 # Ex. 'popular', 'latest', '<username>' or 'track/<id>'
 
-AREA_TO_SCRAPE = 'popular'
-NUMBER_OF_PAGES = 3
+AREA_TO_SCRAPE = 'DeVinnie'
+NUMBER_OF_PAGES = 1
+SONG_FOLDER = 'songs'
 
 # DO NOT MODIFY THESE UNLES YOU KNOW WHAT YOU ARE DOING
 DEBUG = False
@@ -137,13 +142,18 @@ class HypeScraper:
                 url = song_data[u'url']
 
                 download_response = urllib2.urlopen(url)
-                filename = '{} - {}.mp3'.format(artist, title)
+                filename = '{}/{} - {}.mp3'.format(SONG_FOLDER, artist, title)
                 if os.path.exists(filename):
                     print('File already exists , skipping')
                 else:
                     mp3_song_file = open(filename, 'wb')
                     mp3_song_file.write(download_response.read())
                     mp3_song_file.close()
+                    eyed3_song = eyed3.load(filename)
+                    eyed3_song.initTag()
+                    eyed3_song.tag.artist = u"{}".format(track[u'artist'])
+                    eyed3_song.tag.title = u"{}".format(track[u'song'])
+                    eyed3_song.tag.save()
             except urllib2.HTTPError, e:
                 print ('HTTPError = ' + str(e.code) +
                        ' trying hypem download url.')
@@ -157,6 +167,8 @@ class HypeScraper:
 def main():
     scraper = HypeScraper()
     scraper.start()
+    albumart.main()
+
 
 if __name__ == '__main__':
         main()
