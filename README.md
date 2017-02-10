@@ -22,3 +22,9 @@ how to deploy with dependencies yet
 
 
 4. Launch the script `python hypeme.py`
+
+##Extension (compared to original fork)
+
+1. Artist and title of the song are added to the meta-information of the file.
+
+2. Album art is fetched from Google (first image found on google images) and added to the file.
