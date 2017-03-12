@@ -17,10 +17,11 @@ def main():
       song = eyed3.load(name)
       artist = song.tag.artist
       title = song.tag.title
-      art = get_album_art(artist, title)
-      imagedata = open(art,"rb").read()
-      song.tag.images.set(3, imagedata, "image/jpeg")
-      song.tag.save();
+      if not song.tag.images:
+        art = get_album_art(artist, title)
+        imagedata = open(art,"rb").read()
+        song.tag.images.set(3, imagedata, "image/jpeg")
+        song.tag.save();
 
 def get_soup(url,header):
     return BeautifulSoup(urllib2.urlopen(urllib2.Request(url,headers=header)),'html.parser')
@@ -52,3 +53,5 @@ def get_album_art(artist, title):
   except Exception as e:
       print "could not load : "+ img_link
       print e
+
+main()
